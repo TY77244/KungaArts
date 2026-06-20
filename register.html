@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KungaArts - Kwiyandikisha</title>
+    <!-- Links directly to our style sheet created above -->
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Wizard Form Flow structural style rules */
+        .form-step { display: none; }
+        .step-indicators { display: flex; gap: 10px; margin-bottom: 25px; }
+        .indicator { flex: 1; height: 6px; background: #ddd; border-radius: 3px; transition: background 0.3s; }
+        .indicator.active { background: #0078d4; }
+        .error-lbl { color: #d9534f; font-size: 13px; font-weight: bold; margin-top: 6px; display: none; }
+        
+        /* Modal Popup System styles */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-box { background: white; padding: 25px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .notification-card { background: #eef7fc; border-left: 4px solid #0078d4; padding: 12px; margin-top: 15px; border-radius: 4px; font-family: monospace; font-size: 13px; white-space: pre-wrap; word-break: break-all; }
+        .sms-card { background: #e6f9ed; border-left: 4px solid #107c41; }
+    </style>
+</head>
+<body>
+
+    <!-- Shared Navigation Link Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">Kunga<span>Arts</span></a>
+        <div class="nav-links">
+            <a href="index.html">Ahabanza</a>
+            <a href="register.html">Kwiyandikisha</a>
+            <a href="chat.html">Ikiganiro</a>
+            <a href="privacy.html">Ibijanye n'Ibwiriza</a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 600px;">
+        <div class="card">
+            <h2>Urupapuro rwo Kwiyandikisha (Profile Setup)</h2>
+            <p style="color:#666; font-size:13px; margin-bottom:20px;">Yuzuza amakuru akwiriye muburyo bworoshe kugirango uhabwe icyanzu mu matsinda y'abahanzi.</p>
+            
+            <div class="step-indicators">
+                <div class="indicator active" id="ind1"></div>
+                <div class="indicator" id="ind2"></div>
+                <div class="indicator" id="ind3"></div>
+            </div>
+
+            <form id="masterWizardForm" onsubmit="handleFormSubmission(event)">
+                <!-- STEP 1 -->
+                <div class="form-step" id="step1" style="display: block;">
+                    <h3>Intambwe ya 1: Imyirondoro n'Intego y'Ubuhanzi</h3>
+                    
+                    <label for="fullName">Amazina Amashitahore (Full Names)</label>
+                    <input type="text" id="fullName" placeholder="Andika amazina yawe yose" required>
+
+                    <label>Igitsina (Gender)</label>
+                    <div class="inline-radio">
+                        <label><input type="radio" name="gender" value="Gabo" checked> Gabo (Male)</label>
+                        <label><input type="radio" name="gender" value="Gore"> Gore (Female)</label>
+                    </div>
+
+                    <label for="artCategory">Ikiciro cy'Ubuhanzi (Art Category Dropdown List)</label>
+                    <select id="artCategory" required>
+                        <option value="">-- Hitamo ikiciro cyawe --</option>
+                        <option value="Muzika">1. Muzika (Music)</option>
+                        <option value="Sinema no Gufotora">2. Sinema no gufotora (Cinema and Photography)</option>
+                        <option value="Ubuhanzi ngerukarubuga">3. Ubuhanzi ngerukarubuga (Performing Arts)</option>
+                        <option value="Ubuhanzi mbarajisho n'ububoribori">4. Ubuhanzi mbarajisho n'ububoribori (Visual Arts and Craft)</option>
+                        <option value="Ubwanditsi n'Ubuvanganzo">5. Ubwanditsi n'Ubuvanganzo (Literature)</option>
+                        <option value="Ubwiza n'Imideri">6. Ubwiza n'imideri (Beauty and Fashion)</option>
+                        <option value="Amatorero y'imbyino gakondo">7. Amatorero y'imbyino gakondo za Kinyarwanda</option>
+                    </select>
+
+                    <div style="margin-top:20px; text-align:right;">
+                        <button type="button" class="btn" onclick="navigateStep(2)">Ibikurikira (Next) ➡️</button>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="form-step" id="step2">
+                    <h3>Intambwe ya 2: Imigaragarire y'aho Uherereye (Address)</h3>
+                    
+                    <label for="country">Igihugu (Country)</label>
+                    <input type="text" id="country" value="Rwanda" readonly style="background:#eee;">
+
+                    <label for="province">Intara (Province)</label>
+                    <select id="province" required onchange="populateDistricts()">
+                        <option value="">-- Hitamo Intara --</option>
+                        <option value="Kigali">Umujyi wa Kigali</option>
+                        <option value="East">Intara y'Iburasirazuba</option>
+                        <option value="West">Intara y'Iburengerazuba</option>
+                        <option value="North">Intara y'Amajyaruguru</option>
+                        <option value="South">Intara y'Amajyepfo</option>
+                    </select>
+
+                    <label for="district">Akarere (District)</label>
+                    <select id="district" required>
+                        <option value="">-- Hitamo Intara Mbere --</option>
+                    </select>
+
+                    <label for="sector">Umurenge (Sector)</label>
+                    <input type="text" id="sector" placeholder="Andika Umurenge" required>
+
+                    <label for="cell">Akagari (Cell)</label>
+                    <input type="text" id="cell" placeholder="Andika Akagari" required>
+
+                    <label for="village">Umudugudu (Village)</label>
+                    <input type="text" id="village" placeholder="Andika Umudugudu" required>
+
+                    <label for="isibo">Isibo (Isibo Unit - Optional)</label>
+                    <input type="text" id="isibo" placeholder="Andika Isibo niba uyizi">
+
+                    <div style="margin-top:20px; display:flex; justify-content:space-between;">
+                        <button type="button" class="btn btn-secondary" onclick="navigateStep(1)">⬅️ Inyuma (Back)</button>
+                        <button type="button" class="btn" onclick="navigateStep(3)">Ibikurikira (Next) ➡️</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="form-step" id="step3">
+                    <h3>Intambwe ya 3: Umutekano n'Ihuza rya WhatsApp</h3>
+                    
+                    <label for="socialLinks">Imiyoboro y'Imbuga Nkoranyambaga (Social Media Link)</label>
+                    <input type="url" id="socialLinks" placeholder="https://youtube.com" required>
+
+                    <label for="whatsappNumber">Numero ya WhatsApp (WhatsApp Number Contact)</label>
+                    <input type="tel" id="whatsappNumber" placeholder="Ugereranyije: 0788XXXXXX" required>
+
+                    <label for="avatarUpload">Ifoto y'Umuhanzi (Photo Asset Input)</label>
+                    <input type="file" id="avatarUpload" accept="image/*" required onchange="processAvatarPreview(event)">
+                    <div class="avatar-preview-container">
+                        <img id="avatarFrame" alt="User image element" style="display:none; width:80px; height:80px; border-radius:50%; object-fit:cover; margin-top:10px; border: 2px solid #0078d4;">
+                        <span id="avatarLoadStatus" style="font-size:12px; color:#666; display:block; margin-top:5px;">Nta foto yatoranyijwe.</span>
+                    </div>
+
+                    <label for="nationalId">Numero y'Indangamuntu (National ID - Imibare 16)</label>
+                    <input type="text" id="nationalId" placeholder="Andika imibare 16 y'indangamuntu" required maxlength="16">
+                    <div class="error-lbl" id="idErr">⚡ Imetrikshoni: Imibare igomba kuba 16 neza neza.</div>
+
+                    <div style="margin-top:25px; display:flex; justify-content:space-between;">
+                        <button type="button" class="btn btn-secondary" onclick="navigateStep(2)">⬅️ Inyuma (Back)</button>
+                        <button type="submit" class="btn" style="background: #107c41;">Emeza Bishebuje 💾</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-box">
+            <h3 style="color: #107c41; border:none; margin:0;">🎉 Kwiyandikisha Byagenze Neza!</h3>
+            <p style="font-size:14px; margin-top:10px; color:#555;">Amakuru yawe yoherejwe neza muri Sisitemu ya KungaArts.</p>
+            <div class="notification-card" id="dbPayloadCard"></div>
+            <div class="notification-card sms-card" id="smsPayloadCard"></div>
+            <button class="btn" style="width:100%; margin-top:20px;" onclick="closeAndRedirect()">Funga (Injira mu Rugaga)</button>
+        </div>
+    </div>
+
+    <script>
+        // District lists map configuration
+        const districtData = {
+            "Kigali": ["Nyarugenge", "Gasabo", "Kicukiro"],
+            "East": ["Nyagatare", "Gatsibo", "Kayonza", "Rwamagana", "Ngoma", "Kirehe", "Bugesera"],
+            "West": ["Rubavu", "Nyabihu", "Rutsiro", "Karongi", "Ngororero", "Nyamasheke", "Rusizi"],
+            "North": ["Rulindo", "Gakenke", "Musanze", "Burera", "Gicumbi"],
+            "South": ["Kamonyi", "Muhanga", "Ruhango", "Nyanza", "Huye", "Nyamagabe", "Gisagara", "Nyaruguru"]
+        };
+

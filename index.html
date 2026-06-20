@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KungaArts Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .hero { text-align: center; padding: 50px 20px; background: linear-gradient(135deg, #eef7fc, #fcfbf1); border-radius: 12px; margin-bottom: 30px; }
+        .quote-box { background: var(--dark-green); color: white; padding: 15px; text-align: center; font-style: italic; border-radius: 6px; font-weight: bold; min-height: 70px; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
+        .quote-author { font-size: 13px; font-weight: normal; margin-top: 5px; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px; }
+        .manual-section { display: none; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid var(--gray-border); margin-bottom: 25px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">Kunga<span>Arts</span></a>
+        <div class="nav-links">
+            <a href="index.html">Ahabanza</a>
+            <a href="register.html">Kwiyandikisha</a>
+            <a href="chat.html">Ikiganiro</a>
+            <a href="privacy.html">Ibijanye n'Ibwiriza</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Live Automated Quotes (Changes every 45 seconds with Legends) -->
+        <div class="quote-box">
+            <div id="quoteText">Ubugeni ni intwaro ikomeye yo kubaka umuryango...</div>
+            <div id="quoteAuthor" class="quote-author">Rugamba Cyprien</div>
+        </div>
+
+        <!-- System User Starter Manual -->
+        <div class="card" style="border-left: 5px solid var(--secondary-color);">
+            <h4>💡 Uri umuhanzi mushya kuri uru rubuga?</h4>
+            <p style="font-size:14px; margin-bottom:10px;">Kanda hano ubashe gusoma amabwiriza y'uko uru rubuga rukora bwa mbere.</p>
+            <button class="btn btn-secondary" style="padding: 6px 15px; font-size: 13px;" onclick="toggleManual()">Soma Amabwiriza (Read Manual)</button>
+        </div>
+
+        <div id="starterManual" class="manual-section">
+            <h3>📖 Amabwiriza n'Inyandiko y'Umutangizi</h3>
+            <p style="margin-top:10px;"><strong>Intambwe ya 1</strong> — Jya ahaboneka "Kwiyandikisha" wuzuze imyirondoro yawe n'indangamuntu ya mibare 16.</p>
+            <p style="margin-top:5px;"><strong>Intambwe ya 2</strong> — Sisitemu izahita ikugabanyiriza uburemere bw'ifoto yawe ihite ikubakira isano (link) iguhuza n'abandi bahanzi mu itsinda rya WhatsApp.</p>
+            <p style="margin-top:5px;"><strong>Intambwe ya 3</strong> — Injira ahaboneka "Ikiganiro" ubashe kohereza ubutumwa, amafoto, no gushakisha abahanzi banyuranye.</p>
+        </div>
+
+        <div class="hero">
+            <h1 id="welcomeHeading">Welcome to the Rwanda Artist Platform</h1>
+            <p style="font-size: 18px; color: #555; margin-top: 10px;">Urubuga rwa mbere ruhuza abahanzi b'u Rwanda mu bikorwa by'ubugeni n'ubuvanganzo.</p>
+            <div style="margin-top: 20px;" id="heroActionArea">
+                <a href="register.html" class="btn">Kora Profil yawe hano (Register)</a>
+            </div>
+        </div>
+
+        <!-- Profile Statistics Panel Grid -->
+        <div class="card" style="border-top: 4px solid var(--primary-color);">
+            <h3>📊 Imibare y'Abahanzi Banditse (Community Enrollment Stats)</h3>
+            <p style="font-size:13px; color:#666; margin-bottom:15px;">Imibare y'abahanzi bamaze kwiyandikisha b banyuranye dushingiye kuri sisitemu.</p>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px;" id="statsMatrixGrid">
+                <!-- Populated via Javascript -->
+            </div>
+        </div>
+
+        <!-- Dynamic Live Portfolio Component Feed -->
+        <div class="card">
+            <h3>🌟 Profil yawe y'Umuhanzi (Active Portfolio)</h3>
+            <div id="portfolioGrid">
+                <div class="card" style="margin:0; background:#fafafa; border:1px dashed #ccc; text-align:center; padding:20px; color:#888;">
+                    Nta profil yawe yanditse hano. Banza wiyandikishe ubashe kubona umwanya wawe bwite.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Automatic Metric Performance Monitor Bar -->
+    <div class="footer-banner" id="metricCounter">Initializing analytics...</div>
+
+    <!-- JAVASCRIPT LOGIC ENGINE -->
+    <script>
+        // Legend Motivational Quotes Data Loop Array (Executes and flips every 45 seconds)
+        const legendsQuotes = [
+            { text: "“Ubugeni n'indangagaciro zacu niyo nkingi ikomeye isigasira amateka y'u Rwanda.”", author: "Rugamba Cyprien" },
+            { text: "“Creativity is piercing the mundane to find the marvelous.”", author: "Yusuf Chanzu" },
+            { text: "“Umusizi ntabwo apfa, asiga amagambo ye akomeza kubaho mu mitima y'abazakurikira.”", author: "Alexis Kagame" },
+            { text: "“Every wall is a door, and art is the tool we use to unlock it.”", author: "Inshuti y'Abahanzi" },
+            { text: "“Inyandiko n'ubuvanganzo nibyo bikorwa bisigara iyo ikiragano cyacyuye igihe.”", author: "Sande R." }
+        ];
+        
+        let quotePos = 0;
+        function changeQuotes() {
+            const txtBox = document.getElementById('quoteText');
+            const authBox = document.getElementById('quoteAuthor');
+            const parentBox = document.querySelector('.quote-box');
+            
+            parentBox.style.opacity = 0;
+            setTimeout(() => {
+                txtBox.textContent = legendsQuotes[quotePos].text;
+                authBox.textContent = legendsQuotes[quotePos].author;
+                parentBox.style.opacity = 1;
+                quotePos = (quotePos + 1) % legendsQuotes.length;
+            }, 500);
+        }
+        changeQuotes();
+        setInterval(changeQuotes, 45000); // 45000ms = 45 Seconds perfectly
+
+        function toggleManual() {
+            const el = document.getElementById('starterManual');
+            el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+        }
+
+        let analyticsHits = localStorage.getItem('site_analytics_clicks') || 0;
+        analyticsHits++;
+        localStorage.setItem('site_analytics_clicks', analyticsHits);
+        document.getElementById('metricCounter').textContent = `📊 Analytics Tracker Monitor — Active Operations Checked: ${analyticsHits}`;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const profile = JSON.parse(localStorage.getItem('artist_master_profile'));
+            const defaultCategories = ["Muzika", "Sinema", "Ubuhanzi ngerukarubuga", "Ubuhanzi mbarajisho", "Ubwanditsi", "Ubwiza", "Amatorero"];
+            
+            const statsCache = { "Muzika": 45, "Sinema": 22, "Ngerukarubuga": 14, "Mbarajisho": 31, "Ubwanditsi": 19, "Imideri": 27, "Amatorero": 56 };
+
+            if(profile && profile.category) {
+                document.getElementById('welcomeHeading').textContent = `Muraho, ${profile.fullName}!`;
+                document.getElementById('heroActionArea').innerHTML = `<a href="chat.html" class="btn btn-secondary">Injira mu kiganiro cy'abahanzi</a>`;
+                
+                // Add account registration metrics inside data structure dynamically
+                let foundKey = Object.keys(statsCache).find(k => profile.category.includes(k)) || "Muzika";
+                statsCache[foundKey]++;
+
+                const grid = document.getElementById('portfolioGrid');
+                grid.innerHTML = `
+                    <div class="card" style="margin:0; border: 1px solid var(--primary-color);">
+                        <div style="display:flex; gap:15px; align-items:center;">
+                            <img src="${profile.avatarImg}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+                            <div>
+                                <h4>${profile.fullName}</h4>
+                                <small style="color:var(--dark-green); font-weight:bold;">${profile.category}</small>
+                            </div>
+                        </div>
+                        <p style="font-size:13px; margin-top:10px; color:#555;">📍 Akarere: ${profile.district} | Intara: ${profile.province}</p>
+                    </div>
+                `;
+            }
+
+            const statsGrid = document.getElementById('statsMatrixGrid');
+            Object.keys(statsCache).forEach(key => {
+                let div = document.createElement('div');
+                div.style.cssText = "background:var(--light-bg); border:1px solid var(--gray-border); padding:10px; border-radius:6px; text-align:center;";
+                div.innerHTML = `<div style="font-size:22px; font-weight:bold; color:var(--dark-green);">${statsCache[key]}</div><div style="font-size:11px; color:#555;">${key}</div>`;
+                statsGrid.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>

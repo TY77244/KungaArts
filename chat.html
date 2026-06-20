@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KungaArts Local Node Sandbox</title>
+    <style>
+        :root {
+            --primary-blue: #0078d4;
+            --light-blue: #e1f5fe;
+            --dark-bg: #1e1e1e;
+            --warning-bg: #0c231a;
+            --warning-border: #107c41;
+            --text-main: #333;
+            --border-color: #ddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f5f6f8;
+            color: var(--text-main);
+        }
+
+        /* Top Navigation Bar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-blue);
+            cursor: pointer;
+        }
+
+        nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Warning Banner */
+        .warning-banner {
+            background-color: var(--warning-bg);
+            color: #4cd964;
+            padding: 12px 30px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--warning-border);
+        }
+
+        .warning-banner span {
+            margin-right: 8px;
+        }
+
+        /* Main Layout Workspace */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar Menu */
+        .sidebar {
+            width: 280px;
+            background: #fff;
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 12px 15px;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 14px;
+            cursor: pointer;
+            color: #444;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+        }
+
+        .menu-btn span {
+            margin-right: 10px;
+        }
+
+        .menu-btn:hover {
+            background-color: #f0f2f5;
+        }
+
+        .menu-btn.active {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+        /* Chat Dashboard Window */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+
+        .chat-header {
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #444;
+            border-bottom: 1px solid var(--border-color);
+            background: #fafafa;
+        }
+
+        .messages-display {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9fbfd;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Message Bubbles styling */
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .message.system {
+            background-color: #eee;
+            color: #555;
+            align-self: center;
+            text-align: center;
+            font-style: italic;
+            border-radius: 20px;
+            padding: 6px 16px;
+        }
+
+        .message.sent {
+            background-color: var(--light-blue);
+            color: #004d80;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message .meta-info {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .message img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Input Toolbar Section */
+        .input-toolbar {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: #fff;
+        }
+
+        .input-box-wrapper {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .chat-textarea {
+            width: 100%;
+            height: 80px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            resize: none;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .chat-textarea:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* File Upload Styling matched to image */
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #107c41;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-upload-label:hover {
+            background-color: #0b592e;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .send-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .send-btn:hover {
+            background-color: #005a9e;
+        }
+
+        /* Profile Creation Pop-up Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal-box input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .modal-box button {
+            width: 100%;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Visual Feedback for image selection */
+        .preview-thumbnail {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo" onclick="alert('KungaArts Local Node Home')">KungaArts</div>
+        <nav>
+            <a href="#" onclick="alert('Ugeze Ahabanza')">Ahabanza</a>
+            <a href="#" onclick="openProfileModal()">Kwiyandikisha</a>
+            <a href="#" onclick="alert('Ibiganiro Byose')">Ikaniro</a>
+            <a href="#" onclick="alert('Ibijanye n\'ibwiriza')">Ibijanye n'ibwiriza</a>
+        </nav>
+    </header>
+
+    <!-- Warning Banner Element -->
+    <div class="warning-banner" id="warningBanner">
+        <span>⚠️</span> Umuburo: Ntabwo uriyandikisha kuri uru rubuga bwa mbere. Banza ukore Profil yawe.
+    </div>
+
+    <!-- Main App Frame Workspace -->
+    <div class="workspace">
+        
+        <!-- Interactive Sidebar Links -->
+        <aside class="sidebar">
+            <div>
+                <div class="section-title">Ibyumba by'Ibisingizo</div>
+                <button class="menu-btn active" onclick="switchRoom(this, 'Urubuga Rusange (Global Lounge)')">
+                    <span>💬</span> Urubuga Rusange
+                </button>
+                <button class="menu-btn" onclick="switchRoom(this, 'Itsinda ryanjye (My Group)')">
+                    <span>🔒</span> Itsinda ryanjye
+                </button>
+            </div>
+
+            <div>
+                <div class="section-title">Shakisha Abahanzi</div>
+                <button class="menu-btn" onclick="searchArtists()">
+                    <span>🔍</span> Shakisha Abahanzi
+                </button>
+                <button class="menu-btn" onclick="searchRegion()">
+                    <span>📍</span> Shakisha ukoresheje Akarere...
+                </button>
+            </div>
+        </aside>
+
+        <!-- Message/Chat System View -->
+        <main class="chat-container">
+            <div class="chat-header" id="currentRoomTitle">
+            
